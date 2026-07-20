@@ -65,7 +65,7 @@ graph TD
         
         FCM["Firebase Cloud Messaging (FCM)"]
     end
-
+```
 Architecture uses a shared Express backend with Supabase as the managed backend platform for PostgreSQL, Authentication, Storage and Realtime.
 
 # 2. User Roles
