@@ -30,37 +30,41 @@
 
 # 1. System Architecture
 
-```text
-                    Users
-      ┌────────────────────────────────┐
-      │ Field Worker (Expo Mobile App) │
-      │ Manager (Expo Mobile App)      │
-      │ Admin Panel (React + Vite)     │
-      └───────────────┬────────────────┘
-                      │
-                HTTPS / REST API
-                WebSockets
-                      │
-          ┌───────────▼────────────┐
-          │ Node.js + Express API  │
-          │ Authentication         │
-          │ Business Logic         │
-          │ Geofencing             │
-          │ GPS Tracking           │
-          │ Reports                │
-          │ Notifications          │
-          └───────────┬────────────┘
-                      │
-          ┌───────────▼────────────┐
-          │      Supabase          │
-          │ PostgreSQL             │
-          │ Auth                   │
-          │ Storage                │
-          │ Realtime               │
-          └───────────┬────────────┘
-                      │
-      Firebase Cloud Messaging (FCM)
-```
+```mermaid
+graph TD
+    subgraph Clients ["Clients & Users"]
+        FW["Field Worker (Expo Mobile App)"]
+        MG["Manager (Expo Mobile App)"]
+        AD["Admin Panel (React + Vite)"]
+    end
+
+    FW -->|"HTTPS / REST API<br/>WebSockets"| API
+    MG -->|"HTTPS / REST API<br/>WebSockets"| API
+    AD -->|"HTTPS / REST API<br/>WebSockets"| API
+
+    subgraph Backend ["Node.js & Express API"]
+        API["Core API Service"]
+        
+        API --- Auth["Authentication"]
+        API --- Biz["Business Logic"]
+        API --- Geo["Geofencing & GPS Tracking"]
+        API --- Rep["Reports & Analytics"]
+        API --- Notif["Notifications"]
+    end
+
+    API -->|"Database & Storage"| SB
+    API -->|"Push Triggers"| FCM
+
+    subgraph Infrastructure ["Services & Cloud"]
+        subgraph SB ["Supabase"]
+            PG[(PostgreSQL)]
+            SBA[Auth]
+            SBS[Storage]
+            SBR[Realtime]
+        end
+        
+        FCM["Firebase Cloud Messaging (FCM)"]
+    end
 
 Architecture uses a shared Express backend with Supabase as the managed backend platform for PostgreSQL, Authentication, Storage and Realtime.
 
